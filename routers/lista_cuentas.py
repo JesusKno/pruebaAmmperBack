@@ -17,7 +17,7 @@ async def lista_cuentas(link):
     
     payload = {'link': link}
     
-    response = requests.get(url= url, params=payload ,auth=HTTPBasicAuth(usu, contra))
+    response = requests.get(url= url, params=payload ,auth=HTTPBasicAuth(usu, contra), verify=False)
     response_json = response.json()
     
     return response_json

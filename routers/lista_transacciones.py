@@ -18,7 +18,7 @@ async def lista_transacciones(link, idAccount):
     
     payload = {'link': link, 'account': idAccount}
     
-    response = requests.get(url=url, params=payload ,auth=HTTPBasicAuth(usu,contra))
+    response = requests.get(url=url, params=payload ,auth=HTTPBasicAuth(usu,contra), verify=False)
     response_json = response.json()
 
     monto_balance = balance(response_json['results'])
@@ -44,4 +44,4 @@ def balance(data):
     total_egresos = sum(lista_egresos)
     total_balance = total_ingresos - total_egresos
     
-    return total_balance
+    return round(total_balance)

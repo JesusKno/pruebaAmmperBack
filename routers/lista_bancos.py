@@ -1,10 +1,13 @@
+import os
 from fastapi import APIRouter
+from dotenv import load_dotenv
+
 
 import requests
 from requests.auth import HTTPBasicAuth
-
+load_dotenv()
 router = APIRouter()
-
+URL_BANCO = os.getenv('URL')
 #Cambiar esto a variables de ambiente
 #url = 'https://sandbox.belvo.com/api/institutions/'
 urlLinks = 'https://sandbox.belvo.com/api/links/?page=1&fields=id,institution,external_id'
@@ -32,7 +35,7 @@ async def banco(id):
 
 def links():
     name_banks = []
-    response = requests.get(url= urlLinks, auth=HTTPBasicAuth(usu, contra))
+    response = requests.get(url= urlLinks, auth=HTTPBasicAuth(usu, contra), verify=False)
     response_json = response.json()
     #revisar como enviar el link para que se vea reflejado en el api de bancos
     for i in response_json["results"]:
