@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from db.cliente import db_cliente
 
 
 
@@ -10,16 +11,28 @@ async def login_usuario(usuario, password):
     #la contraseña esta hasheada con md5 es 12345
     print(usuario)
     print(password)
-    usuarioParams = usuario
-    usuarioBD = {"nombre": 'Jesus', 'usuario': 'jcano1460@gmail.com', 'password': '827ccb0eea8a706c4c34a16891f84e7b'}
-    return {"usuario" : "Jesus"}
+    response = {}
+    usuario = db_cliente.local.users.find_one({"usuario": usuario})
+    if usuario:
+        if usuario['password'] == password:
+            response = {"usuario" : usuario['nombre']}
+        else:
+            response = {'Error': 'Contraseña no valida'}
+    else:
+        response = {'Error': 'Usuario no valido'}
+        
+    print(response)
+    return response
 
-
-@router.get('/loginRegister/{nombre}/{usuario}/{password}')
+@router.post('/loginRegister/{nombre}/{usuario}/{password}')
 async def login_usuario(nombre, usuario, password):
     #la contraseña esta hasheada con md5 es 12345
-    print(usuario)
-    print(password)
-    usuarioParams = usuario
-    usuarioBD = {"nombre": 'Jesus', 'usuario': 'jcano1460@gmail.com', 'password': '827ccb0eea8a706c4c34a16891f84e7b'}
-    return {"usuario" : nombre}
+    userRegister = db_cliente.local.users.find_one({"usuario": usuario})
+    if userRegister:
+        return {'Error': 'El usuario ya existe'}
+    else:
+        usuarioBD = {"nombre": nombre, 'usuario': usuario, 'password': password}
+        usuarioDict = dict(usuarioBD)
+        db_cliente.local.users.insert_one(usuarioDict)
+    
+        return {"usuario" : nombre}
